@@ -2,23 +2,66 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
-from django.core.mail import send_mail
+from django.core.mail import send_mail,EmailMessage
 from django.conf import settings
 from .serializers import CareerApplicationSerializer,ContactMessageSerializer,MOUSerializer,GalleryImageSerializer,ProjectSerializer,CommunityItemSerializer
 from rest_framework.generics import ListAPIView
 from .models import CareerApplication,ContactMessage,MOU,GalleryImage,Project,CommunityItem
 from .serializers import CpuInquirySerializer
+
 class CareerApplicationCreate(APIView):
     def post(self, request):
         serializer = CareerApplicationSerializer(data=request.data)
+
         if serializer.is_valid():
-            serializer.save()
+            application = serializer.save()
+
+            subject = "New Career Application Received"
+
+            body = f"""
+New Career Application Submitted
+
+Full Name: {application.full_name}
+Email: {application.email}
+Phone: {application.phone}
+
+College: {application.college}
+CGPA: {application.cgpa}
+Year of Passing: {application.year_of_passing}
+Experience: {application.experience}
+
+Skills:
+{application.skills}
+"""
+
+            email = EmailMessage(
+                subject=subject,
+                body=body,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                to=[settings.EMAIL_HOST_USER],
+            )
+
+            # 👉 Attach resume PDF
+            if application.resume:
+                email.attach_file(application.resume.path)
+
+            try:
+                email.send()
+                email_status = "Email sent with resume attached"
+
+            except Exception as e:
+                print("Career email error:", e)
+                email_status = f"Email failed: {e}"
+
             return Response(
-                {"message": "Application submitted successfully"},
+                {
+                    "message": "Application submitted successfully",
+                    "email_status": email_status
+                },
                 status=status.HTTP_201_CREATED
             )
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
 
 class ContactMessageCreate(APIView):
     def post(self, request):
