@@ -2,9 +2,6 @@
 Django settings for backend project.
 """
 
-import pymysql
-pymysql.install_as_MySQLdb()
-
 import os
 from pathlib import Path
 
