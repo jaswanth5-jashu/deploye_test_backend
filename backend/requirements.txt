@@ -5,5 +5,7 @@ django-cors-headers
 cloudinary
 django-cloudinary-storage
 pillow
-python-dotenv
+pymysql
+
+
 

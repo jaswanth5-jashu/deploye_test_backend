@@ -3,7 +3,10 @@ Django settings for backend project.
 """
 
 from pathlib import Path
+import pymysql
 import os
+pymysql.install_as_MySQLdb()
+
 
 # ---------------- BASE DIR & ENV ----------------
 BASE_DIR = Path(__file__).resolve().parent.parent
