@@ -4,11 +4,10 @@ Django settings for backend project.
 
 from pathlib import Path
 import os
-from dotenv import load_dotenv
 
 # ---------------- BASE DIR & ENV ----------------
 BASE_DIR = Path(__file__).resolve().parent.parent
-load_dotenv(BASE_DIR / ".env")  # Load .env once at the top
+
 
 # ---------------- SECURITY ----------------
 SECRET_KEY = 'django-insecure-ueaj1recwi_e&8o5!jl*#o7323&kn64-l0m5=!423k+b^5n=d5'
