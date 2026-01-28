@@ -1,0 +1,7 @@
+Django
+gunicorn
+djangorestframework
+django-cors-headers
+cloudinary
+django-cloudinary-storage
+pillow
