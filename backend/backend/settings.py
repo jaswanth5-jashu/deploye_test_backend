@@ -102,6 +102,10 @@ CORS_ALLOWED_ORIGINS = [
     "https://citsfrontend.netlify.app",
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://citsfrontend.netlify.app",
+]
+
 
 
 ALLOWED_HOSTS = ['.onrender.com']
