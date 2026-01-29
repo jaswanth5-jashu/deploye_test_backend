@@ -63,9 +63,13 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 # ---------------- DATABASE ----------------
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "project_cits",
+        "USER": "root",
+        "PASSWORD": "Jashu@2004",
+        "HOST": "localhost",  
+        "PORT": "3306",
     }
 }
 
