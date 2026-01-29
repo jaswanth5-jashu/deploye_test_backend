@@ -2,34 +2,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
-from rest_framework.generics import ListAPIView
-
-from django.core.mail import send_mail, EmailMessage, BadHeaderError
+from django.core.mail import send_mail,EmailMessage
 from django.conf import settings
+from .serializers import CareerApplicationSerializer,ContactMessageSerializer,MOUSerializer,GalleryImageSerializer,ProjectSerializer,CommunityItemSerializer
+from rest_framework.generics import ListAPIView
+from .models import CareerApplication,ContactMessage,MOU,GalleryImage,Project,CommunityItem
+from .serializers import CpuInquirySerializer
 
-from .serializers import (
-    CareerApplicationSerializer,
-    ContactMessageSerializer,
-    MOUSerializer,
-    GalleryImageSerializer,
-    ProjectSerializer,
-    CommunityItemSerializer,
-    CpuInquirySerializer,
-)
-
-from .models import (
-    CareerApplication,
-    ContactMessage,
-    MOU,
-    GalleryImage,
-    Project,
-    CommunityItem,
-)
-
-import traceback
-
-
-# ---------------- CAREER APPLICATION ----------------
 class CareerApplicationCreate(APIView):
     def post(self, request):
         serializer = CareerApplicationSerializer(data=request.data)
@@ -38,6 +17,7 @@ class CareerApplicationCreate(APIView):
             application = serializer.save()
 
             subject = "New Career Application Received"
+
             body = f"""
 New Career Application Submitted
 
@@ -61,12 +41,14 @@ Skills:
                 to=[settings.EMAIL_HOST_USER],
             )
 
+            # 👉 Attach resume PDF
             if application.resume:
                 email.attach_file(application.resume.path)
 
             try:
                 email.send()
-                email_status = "Email sent successfully"
+                email_status = "Email sent with resume attached"
+
             except Exception as e:
                 print("Career email error:", e)
                 email_status = f"Email failed: {e}"
@@ -74,70 +56,54 @@ Skills:
             return Response(
                 {
                     "message": "Application submitted successfully",
-                    "email_status": email_status,
+                    "email_status": email_status
                 },
-                status=status.HTTP_201_CREATED,
+                status=status.HTTP_201_CREATED
             )
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-# ---------------- CONTACT MESSAGE ----------------
 class ContactMessageCreate(APIView):
     def post(self, request):
         serializer = ContactMessageSerializer(data=request.data)
-
         if serializer.is_valid():
             contact = serializer.save()
 
-            try:
-                send_mail(
-                    subject=f"New Contact: {contact.subject}",
-                    message=f"""
+            # Send mail to admin
+            send_mail(
+                subject=f"New Contact: {contact.subject}",
+                message=f"""
 Name: {contact.name}
 Email: {contact.email}
-Phone: {contact.phone}
+phone:{contact.phone}
 
 Message:
 {contact.message}
-""",
-                    from_email=settings.DEFAULT_FROM_EMAIL,
-                    recipient_list=[settings.EMAIL_HOST_USER],
-                    fail_silently=False,
-                )
-                email_status = "Email sent successfully"
-            except Exception as e:
-                print("Contact email error:", e)
-                email_status = f"Email failed: {e}"
+                """,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[settings.EMAIL_HOST_USER],
+                fail_silently=False,
+            )
 
             return Response(
-                {
-                    "message": "Message received successfully",
-                    "email_status": email_status,
-                },
-                status=status.HTTP_201_CREATED,
+                {"message": "Message sent successfully"},
+                status=status.HTTP_201_CREATED
             )
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-# ---------------- MOU ----------------
+    
 class MOUListAPIView(ListAPIView):
     serializer_class = MOUSerializer
 
     def get_queryset(self):
         return MOU.objects.filter(is_active=True)
-
-
-# ---------------- GALLERY ----------------
+    
 class GalleryImageListAPIView(ListAPIView):
     serializer_class = GalleryImageSerializer
 
     def get_queryset(self):
-        return GalleryImage.objects.all().order_by("-created_at")
-
-
-# ---------------- PROJECTS ----------------
+        return GalleryImage.objects.all().order_by('-created_at')
+    
 class ProjectListAPIView(APIView):
     def get(self, request):
         projects = Project.objects.all()
@@ -145,28 +111,33 @@ class ProjectListAPIView(APIView):
         return Response(serializer.data)
 
 
-# ---------------- COMMUNITY ----------------
 class CommunityItemListAPIView(ListAPIView):
     serializer_class = CommunityItemSerializer
 
     def get_queryset(self):
         return CommunityItem.objects.filter(section="giveback").order_by("-created_at")
 
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from django.core.mail import send_mail, BadHeaderError
+from django.conf import settings
+from .serializers import CpuInquirySerializer
+import traceback
 
-# ---------------- CPU INQUIRY ----------------
-@api_view(["POST"])
+@api_view(['POST'])
 def create_inquiry(request):
     serializer = CpuInquirySerializer(data=request.data)
-
     if serializer.is_valid():
         inquiry = serializer.save()
 
         subject = "New CPU Inquiry Received"
         message = f"""
+New CPU Requirement Submitted
+
 Name: {inquiry.full_name}
 Email: {inquiry.email}
-Phone: {inquiry.phone}
-
+phone:{inquiry.phone}
 CPU Model: {inquiry.cpu_model}
 Quantity: {inquiry.quantity}
 RAM: {inquiry.ram}
@@ -181,21 +152,29 @@ Message:
                 subject,
                 message,
                 settings.DEFAULT_FROM_EMAIL,
-                [settings.EMAIL_HOST_USER],
+                ["jaswanthsimha2004@gmail.com"],
                 fail_silently=False,
             )
             email_status = "Email sent successfully"
-        except Exception as e:
-            print("Inquiry email error:", e)
+
+        except BadHeaderError as bhe:
+            # Specific email header error
+            print("BadHeaderError:", bhe)
             traceback.print_exc()
-            email_status = f"Email failed: {e}"
+            email_status = "Email failed due to bad header"
+
+        except Exception as e:
+            # Any other email sending error
+            print("Email sending error:", e)
+            traceback.print_exc()
+            email_status = f"Email sending failed: {e}"
 
         return Response(
             {
                 "message": "Inquiry submitted successfully",
-                "email_status": email_status,
+                "email_status": email_status
             },
-            status=status.HTTP_201_CREATED,
+            status=status.HTTP_201_CREATED
         )
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

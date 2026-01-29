@@ -12,10 +12,12 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+# ---------------- SECURITY ----------------
+SECRET_KEY = 'django-insecure-ueaj1recwi_e&8o5!jl*#o7323&kn64-l0m5=!423k+b^5n=d5'
+DEBUG = os.getenv("DEBUG", "True") == "True"
+ALLOWED_HOSTS = []
 
-
-
-# ---------------- APPLICATIONS ----------------A
+# ---------------- APPLICATIONS ----------------
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -105,5 +107,4 @@ CSRF_TRUSTED_ORIGINS = [
     "https://citsfrontend.netlify.app",
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True
 
