@@ -9,59 +9,44 @@ from rest_framework.generics import ListAPIView
 from .models import CareerApplication,ContactMessage,MOU,GalleryImage,Project,CommunityItem
 from .serializers import CpuInquirySerializer
 
-class CareerApplicationCreate(APIView):
+class ContactMessageCreate(APIView):
     def post(self, request):
-        serializer = CareerApplicationSerializer(data=request.data)
+        serializer = ContactMessageSerializer(data=request.data)
 
         if serializer.is_valid():
-            application = serializer.save()
-
-            subject = "New Career Application Received"
-
-            body = f"""
-New Career Application Submitted
-
-Full Name: {application.full_name}
-Email: {application.email}
-Phone: {application.phone}
-
-College: {application.college}
-CGPA: {application.cgpa}
-Year of Passing: {application.year_of_passing}
-Experience: {application.experience}
-
-Skills:
-{application.skills}
-"""
-
-            email = EmailMessage(
-                subject=subject,
-                body=body,
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                to=[settings.EMAIL_HOST_USER],
-            )
-
-            # 👉 Attach resume PDF
-            if application.resume:
-                email.attach_file(application.resume.path)
+            contact = serializer.save()
 
             try:
-                email.send()
-                email_status = "Email sent with resume attached"
+                send_mail(
+                    subject=f"New Contact: {contact.subject}",
+                    message=f"""
+Name: {contact.name}
+Email: {contact.email}
+Phone: {contact.phone}
+
+Message:
+{contact.message}
+                    """,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[settings.EMAIL_HOST_USER],
+                    fail_silently=False,
+                )
+                email_status = "Email sent successfully"
 
             except Exception as e:
-                print("Career email error:", e)
+                print("Contact email error:", e)
                 email_status = f"Email failed: {e}"
 
             return Response(
                 {
-                    "message": "Application submitted successfully",
+                    "message": "Message received successfully",
                     "email_status": email_status
                 },
                 status=status.HTTP_201_CREATED
             )
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class ContactMessageCreate(APIView):
     def post(self, request):
