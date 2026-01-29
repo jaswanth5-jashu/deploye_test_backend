@@ -108,3 +108,4 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 
+ALLOWED_HOSTS = ['.onrender.com']
