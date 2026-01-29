@@ -1,11 +1,6 @@
-django
+Django>=4.2
 gunicorn
-djangorestframework
+whitenoise
 django-cors-headers
-cloudinary
-django-cloudinary-storage
-pillow
-
-
-
-
+djangorestframework>=3.14
+mysqlclient
