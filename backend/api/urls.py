@@ -1,5 +1,10 @@
 from django.urls import path
-from .views import CareerApplicationCreate,ContactMessageCreate,MOUListAPIView,GalleryImageListAPIView,ProjectListAPIView,CommunityItemListAPIView
+from .views import ( CareerApplicationCreate,
+                    ContactMessageCreate,
+                    MOUListAPIView,
+                    GalleryImageListAPIView,
+                    ProjectListAPIView,
+                    CommunityItemListAPIView )
 from .views import create_inquiry
 
 urlpatterns = [
