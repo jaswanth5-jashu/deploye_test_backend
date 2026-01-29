@@ -99,6 +99,9 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # ---------------- CORS ----------------
+
+ALLOWED_HOSTS = ['.onrender.com']
+
 CORS_ALLOWED_ORIGINS = [
     "https://citsfrontend.netlify.app",
 ]
@@ -108,4 +111,4 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 
-ALLOWED_HOSTS = ['.onrender.com']
+
