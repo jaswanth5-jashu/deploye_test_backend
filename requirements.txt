@@ -1,6 +1,7 @@
-django>=4.2
+django
 gunicorn
 whitenoise
 django-cors-headers
-djangorestframework>=3.14
+djangorestframework
 mysqlclient
+pymysql
