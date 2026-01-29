@@ -100,7 +100,14 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # ---------------- CORS ----------------
 
-ALLOWED_HOSTS = ['.onrender.com']
+
+ALLOWED_HOSTS = [
+    "deploye-test-backend.onrender.com",
+    ".onrender.com",
+    "localhost",
+    "127.0.0.1",
+]
+
 
 CORS_ALLOWED_ORIGINS = [
     "https://citsfrontend.netlify.app",
