@@ -12,12 +12,10 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# ---------------- SECURITY ----------------
-SECRET_KEY = 'django-insecure-ueaj1recwi_e&8o5!jl*#o7323&kn64-l0m5=!423k+b^5n=d5'
-DEBUG = os.getenv("DEBUG", "True") == "True"
-ALLOWED_HOSTS = []
 
-# ---------------- APPLICATIONS ----------------
+
+
+# ---------------- APPLICATIONS ----------------A
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -31,7 +29,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -40,6 +38,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
 
 ROOT_URLCONF = 'backend.urls'
 
@@ -106,7 +105,5 @@ CSRF_TRUSTED_ORIGINS = [
     "https://citsfrontend.netlify.app",
 ]
 
-
-
-ALLOWED_HOSTS = ['.onrender.com']
+CORS_ALLOW_ALL_ORIGINS = True
 
